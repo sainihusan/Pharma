@@ -42,7 +42,7 @@ export default function Contact() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
-                { icon: <Phone className="text-blue-500" />, title: "Phone Support", detail: "+91 9876543210" },
+                { icon: <Phone className="text-blue-500" />, title: "Phone Support", detail: "+91 7973745678" },
                 {
                   icon: (
                     <a href='https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox' target='_blank'>
@@ -58,8 +58,8 @@ export default function Contact() {
                     <MapPin className="text-rose-500" />
                   </a>),
                   title: "Headquarters",
-                  detail: "Rajpura, Punjab",
-                  link: "https://maps.app.goo.gl/KaXyjHuSpwzsxmUr7"
+                  detail: "Mohali, Punjab",
+                  link: "https://maps.app.goo.gl/f1oF9C8sfkUYMHjZ8"
                 }
               ].map((item, i) => (
                 <div key={i} className="group p-4 rounded-3xl bg-white/40 backdrop-blur-md border border-slate-100 hover:border-blue-200 hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300">
