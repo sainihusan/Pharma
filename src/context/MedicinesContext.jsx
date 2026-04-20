@@ -21,7 +21,8 @@ export const MedicinesProvider = ({ children }) => {
         requestHeaders['Authorization'] = `Bearer ${token}`;
       }
 
-      const res = await axios.get('http://localhost:5000/api/products', {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+      const res = await axios.get(`${API_BASE}/products`, {
         headers: requestHeaders
       });
 
@@ -73,8 +74,9 @@ export const MedicinesProvider = ({ children }) => {
         requestHeaders['Authorization'] = `Bearer ${token}`;
       }
 
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
       // FIRST API: POST /api/products
-      const res = await axios.post('http://localhost:5000/api/products', payload, {
+      const res = await axios.post(`${API_BASE}/products`, payload, {
         headers: requestHeaders
       });
 
