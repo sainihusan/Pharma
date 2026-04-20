@@ -95,7 +95,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-blue-600" />
-                <p>+91-7973712345/p>
+                <p>+91-7973712345</p>
               </div>
               <div className="flex items-center gap-3">
                 <a href='https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox' target='_blank'>
