@@ -88,14 +88,14 @@ const Footer = () => {
             <h3 className="text-gray-900 font-bold text-lg mb-6">Get in Touch</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <a href='https://maps.app.goo.gl/KaXyjHuSpwzsxmUr7' target='_blank'>
+                <a href='https://maps.app.goo.gl/f1oF9C8sfkUYMHjZ8' target='_blank'>
                   <LocationOn className="text-blue-600 mt-1" />
                 </a>
-                <p>121, ambala road, rajpura <br />punjab, india</p>
+                <p>Sector 115, Casa Homes, kharar-Landran Road, Mohali-140307<br />Punjab, India</p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-blue-600" />
-                <p>+91 9876543210</p>
+                <p>+91-7973739375</p>
               </div>
               <div className="flex items-center gap-3">
                 <a href='https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox' target='_blank'>
