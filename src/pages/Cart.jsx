@@ -59,25 +59,31 @@ export default function Cart() {
 
   const selectedPayment = watch('paymentMethod');
 
-  const finishOrder = (data) => {
-    addOrder({
-      items: cart,
-      total: orderTotal,
-      shippingAddress: {
-        name: data.name,
-        address: data.address,
-        mobile: data.mobile,
-        pincode: data.pincode,
-      },
-      paymentMethod: data.paymentMethod,
-      userEmail: user.email,
-      userId: user.id || user._id,
-    });
+  const finishOrder = async (data) => {
+    try {
+      await addOrder({
+        items: cart,
+        total: orderTotal,
+        shippingAddress: {
+          name: data.name,
+          address: data.address,
+          mobile: data.mobile,
+          pincode: data.pincode,
+        },
+        paymentMethod: data.paymentMethod,
+        userEmail: user.email,
+        userId: user.id || user._id,
+      });
 
-    clearCart();
-    setShowCheckout(false);
-    setIsProcessing(false);
-    navigate('/orders');
+      clearCart();
+      setShowCheckout(false);
+      setIsProcessing(false);
+      navigate('/orders');
+    } catch (error) {
+      console.error('Order checkout failed:', error);
+      setIsProcessing(false);
+      alert('Failed to place order. Please try again.');
+    }
   };
 
   const onSubmit = async (data) => {

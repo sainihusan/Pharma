@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { Package, XCircle, Trash2, Clock, Calendar, CheckCircle, User as UserIcon } from 'lucide-react';
 
 export default function OrderHistory() {
-  const { orders, cancelOrder, deleteOrder, updateOrderStatus } = useOrders();
+  const { orders, cancelOrder, deleteOrder, updateOrderStatus, acceptOrder } = useOrders();
   const { user, isAdmin } = useAuth();
 
   const displayOrders = isAdmin
@@ -75,11 +75,14 @@ export default function OrderHistory() {
                       ? 'bg-rose-100 text-rose-700'
                       : order.status === 'Delivered'
                         ? 'bg-green-100 text-green-700'
-                        : 'bg-blue-100 text-blue-700'
+                        : order.status === 'Accepted'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'bg-blue-100 text-blue-700'
                       }`}
                   >
                     {order.status === 'Cancelled' && <XCircle size={14} />}
                     {order.status === 'Delivered' && <CheckCircle size={14} />}
+                    {order.status === 'Accepted' && <CheckCircle size={14} />}
                     {order.status === 'Pending' && <Clock size={14} />}
                     {order.status}
                   </span>
@@ -116,30 +119,41 @@ export default function OrderHistory() {
 
               <div className="bg-gray-50/50 p-4 sm:px-6 flex justify-end gap-3 border-t border-gray-100">
                 {isAdmin && order.status === 'Pending' && (
+                  <>
+                    <button
+                      onClick={() => acceptOrder(order.id)}
+                      className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold shadow-sm"
+                    >
+                      <CheckCircle size={16} />
+                      Accept Order
+                    </button>
+                    <button
+                      onClick={() => updateOrderStatus(order.id, 'Delivered')}
+                      className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm"
+                    >
+                      <CheckCircle size={16} />
+                      Mark as Delivered
+                    </button>
+                  </>
+                )}
+                {isAdmin && order.status === 'Accepted' && (
                   <button
                     onClick={() => updateOrderStatus(order.id, 'Delivered')}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm"
+                    className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm"
                   >
                     <CheckCircle size={16} />
                     Mark as Delivered
                   </button>
                 )}
-                {order.status === 'Pending' && (
+                {(order.status === 'Pending' || order.status === 'Accepted') && (
                   <button
                     onClick={() => cancelOrder(order.id)}
-                    className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-semibold"
+                    className="flex cursor-pointer items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-semibold"
                   >
                     <XCircle size={16} />
                     Cancel Order
                   </button>
                 )}
-                <button
-                  onClick={() => deleteOrder(order.id)}
-                  className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition-colors text-sm font-semibold"
-                >
-                  <Trash2 size={16} />
-                  Delete List
-                </button>
               </div>
             </div>
           ))}

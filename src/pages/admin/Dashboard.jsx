@@ -106,7 +106,8 @@ export default function Dashboard() {
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Category</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Description</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Price (₹)</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Cost (₹)</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Sell (₹)</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -138,7 +139,8 @@ export default function Dashboard() {
                   <TableCell sx={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {med.description}
                   </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 'bold' }}>₹{med.price}</TableCell>
+                  <TableCell align="right" sx={{ color: 'text.secondary' }}>₹{med.costPrice || '-'}</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 'bold', color: 'primary.main' }}>₹{med.price}</TableCell>
                   <TableCell align="center">
                     <IconButton color="primary" onClick={() => handleOpenEdit(med)} size="small">
                       <EditIcon fontSize="small" />

@@ -11,27 +11,54 @@ const brands = [
 ];
 
 const Brands = () => {
+  // Duplicate brands to create a seamless loop
+  const tickerBrands = [...brands, ...brands, ...brands];
+
   return (
-    <section className="py-7 bg-white border-t border-gray-50 overflow-hidden">
+    <section className="py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-10">
-          Partnered with world leading pharmaceutical brands
+        <p className="text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-10">
+          Trusted by Industry Leaders
         </p>
 
-        <div className="flex overflow-x-auto lg:flex-wrap lg:justify-center items-center gap-12 md:gap-20 pb-4 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          {brands.map((brand, index) => (
-            <motion.img
-              key={brand.name}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              whileHover={{ opacity: 1, scale: 1.1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              src={brand.logo}
-              alt={brand.name}
-              className="flex-shrink-0 snap-center h-8 sm:h-10 md:h-12 lg:h-12 w-auto object-contain cursor-pointer transition-all"
-            />
-          ))}
+        <div className="relative overflow-hidden group">
+          {/* Contain the slider within the max-w-7xl width */}
+          <motion.div
+            className="flex gap-16 md:gap-15 items-center"
+            animate={{
+              x: [0, -1000],
+            }}
+            transition={{
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 25,
+                ease: "linear",
+              },
+            }}
+            style={{
+              width: "fit-content",
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden"
+            }}
+          >
+            {tickerBrands.map((brand, index) => (
+              <div
+                key={`${brand.name}-${index}`}
+                className="flex-shrink-0 flex items-center justify-center    transition-all duration-300"
+              >
+                <img
+                  src={brand.logo}
+                  alt={brand.name}
+                  className="h-8 md:h-10 w-auto object-contain"
+                />
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Optional: Contained fade effect */}
+          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </div>
     </section>

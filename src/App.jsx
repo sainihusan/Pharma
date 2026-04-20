@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import Cart from './pages/Cart';
 import OrderHistory from './pages/OrderHistory';
 import Dashboard from './pages/admin/Dashboard';
+import Revenue from './pages/admin/Revenue';
 
 
 import WelcomePage from './pages/WelcomePage';
@@ -90,6 +91,10 @@ export default function App() {
 
                       <Route path="/admin/dashboard" element={
                         <ProtectedRoute adminOnly><Dashboard /></ProtectedRoute>
+                      } />
+
+                      <Route path="/admin/revenue" element={
+                        <ProtectedRoute adminOnly><Revenue /></ProtectedRoute>
                       } />
 
                       <Route path="*" element={<Navigate to="/" replace />} />

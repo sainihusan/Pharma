@@ -32,7 +32,7 @@ const Stats = () => {
               We continue to set standards in modern pharmacy services.
             </p>
           </div>
-          <dl className="mt-10 grid grid-cols-1 gap-0.5 overflow-hidden text-center sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="mt-10 grid grid-cols-1 gap-4 overflow-hidden text-center sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.id}

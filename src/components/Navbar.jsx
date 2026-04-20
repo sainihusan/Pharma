@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import {
   ShoppingCart, LogOut, ShieldAlert, User,
-  Clock, Menu, X, ChevronDown, LogIn, UserPlus,
+  Clock, Menu, X, ChevronDown, LogIn, UserPlus, TrendingUp
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -164,13 +164,22 @@ export default function Navbar() {
                       </Link>
 
                       {isAdmin && (
-                        <Link
-                          to="/admin/dashboard"
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors"
-                          onClick={() => setIsProfileOpen(false)}
-                        >
-                          <ShieldAlert size={16} /> Admin Dashboard
-                        </Link>
+                        <>
+                          <Link
+                            to="/admin/dashboard"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors"
+                            onClick={() => setIsProfileOpen(false)}
+                          >
+                            <ShieldAlert size={16} /> Admin Dashboard
+                          </Link>
+                          <Link
+                            to="/admin/revenue"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 transition-colors"
+                            onClick={() => setIsProfileOpen(false)}
+                          >
+                            <TrendingUp size={16} /> Revenue Analytics
+                          </Link>
+                        </>
                       )}
 
                       <div className="border-t border-gray-50 mt-1 pt-1">
@@ -262,13 +271,22 @@ export default function Navbar() {
                     </Link>
 
                     {isAdmin && (
-                      <Link
-                        to="/admin/dashboard"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors"
-                      >
-                        <ShieldAlert size={18} /> Admin Dashboard
-                      </Link>
+                      <>
+                        <Link
+                          to="/admin/dashboard"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors"
+                        >
+                          <ShieldAlert size={18} /> Admin Dashboard
+                        </Link>
+                        <Link
+                          to="/admin/revenue"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-emerald-600 hover:bg-emerald-50 transition-colors"
+                        >
+                          <TrendingUp size={18} /> Revenue Analytics
+                        </Link>
+                      </>
                     )}
 
                     <button

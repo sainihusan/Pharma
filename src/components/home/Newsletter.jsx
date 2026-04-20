@@ -94,7 +94,7 @@ const Newsletter = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={placeholderText}
-                  className="flex-1 px-6 py-4 rounded-full border-0 bg-white placeholder-black shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-white outline-none"
+                  className="flex-1 px-6 py-4 rounded-full border-0 bg-white text-black placeholder-black/50 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-white outline-none font-bold"
                   required
                 />
                 <Button
