@@ -88,7 +88,7 @@ export default function MedicineForm({ open, handleClose, onSubmit, initialData 
             {initialData ? 'Update Product' : 'Add New Product'}
           </Typography>
         </Box>
-        <IconButton onClick={handleClose} size="small" sx={{ color: 'text.secondary' }}>
+        <IconButton onClick={handleClose} size="small" sx={{ color: 'text.secondary' }} aria-label="Close dialog">
           <X size={20} />
         </IconButton>
       </DialogTitle>

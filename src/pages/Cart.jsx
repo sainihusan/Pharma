@@ -219,6 +219,7 @@ export default function Cart() {
                           <button
                             onClick={() => updateQuantity(item.id, -1)}
                             disabled={item.quantity <= 1}
+                            aria-label={`Decrease quantity of ${item.name}`}
                             className="px-4 py-2 hover:bg-gray-50 text-gray-600 transition-colors font-medium text-lg active:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:active:bg-white"
                           >
                             -
@@ -228,6 +229,7 @@ export default function Cart() {
                           </span>
                           <button
                             onClick={() => updateQuantity(item.id, 1)}
+                            aria-label={`Increase quantity of ${item.name}`}
                             className="px-4 py-2 hover:bg-gray-50 text-gray-600 transition-colors font-medium text-lg active:bg-gray-100"
                           >
                             +
