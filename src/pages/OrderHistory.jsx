@@ -1,9 +1,9 @@
 import { useOrders } from '../context/OrdersContext';
 import { useAuth } from '../context/AuthContext';
-import { Package, XCircle, Trash2, Clock, Calendar, CheckCircle, User as UserIcon } from 'lucide-react';
+import { Package, XCircle, Trash2, Clock, Calendar, CheckCircle, User as UserIcon, Loader2 } from 'lucide-react';
 
 export default function OrderHistory() {
-  const { orders, cancelOrder, deleteOrder, updateOrderStatus, acceptOrder } = useOrders();
+  const { orders, cancelOrder, deleteOrder, updateOrderStatus, acceptOrder, processingOrder } = useOrders();
   const { user, isAdmin } = useAuth();
 
   const displayOrders = isAdmin
@@ -23,6 +23,10 @@ export default function OrderHistory() {
       </div>
     );
   }
+
+  const isOrderProcessing = (orderId, action) => {
+    return processingOrder?.id === orderId && (action ? processingOrder?.action === action : true);
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen py-10">
@@ -122,36 +126,56 @@ export default function OrderHistory() {
                   <>
                     <button
                       onClick={() => acceptOrder(order.id)}
-                      className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold shadow-sm"
+                      disabled={isOrderProcessing(order.id)}
+                      className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold shadow-sm disabled:opacity-70 disabled:cursor-not-allowed min-w-[120px] justify-center"
                     >
-                      <CheckCircle size={16} />
-                      Accept Order
+                      {isOrderProcessing(order.id, 'accept') ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <CheckCircle size={16} />
+                      )}
+                      {isOrderProcessing(order.id, 'accept') ? 'Accepting...' : 'Accept Order'}
                     </button>
                     <button
                       onClick={() => updateOrderStatus(order.id, 'Delivered')}
-                      className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm"
+                      disabled={isOrderProcessing(order.id)}
+                      className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm disabled:opacity-70 disabled:cursor-not-allowed min-w-[160px] justify-center"
                     >
-                      <CheckCircle size={16} />
-                      Mark as Delivered
+                      {isOrderProcessing(order.id, 'delivered') ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <CheckCircle size={16} />
+                      )}
+                      {isOrderProcessing(order.id, 'delivered') ? 'Updating...' : 'Mark as Delivered'}
                     </button>
                   </>
                 )}
                 {isAdmin && order.status === 'Accepted' && (
                   <button
                     onClick={() => updateOrderStatus(order.id, 'Delivered')}
-                    className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm"
+                    disabled={isOrderProcessing(order.id)}
+                    className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm disabled:opacity-70 disabled:cursor-not-allowed min-w-[160px] justify-center"
                   >
-                    <CheckCircle size={16} />
-                    Mark as Delivered
+                    {isOrderProcessing(order.id, 'delivered') ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <CheckCircle size={16} />
+                    )}
+                    {isOrderProcessing(order.id, 'delivered') ? 'Updating...' : 'Mark as Delivered'}
                   </button>
                 )}
                 {(order.status === 'Pending' || order.status === 'Accepted') && (
                   <button
                     onClick={() => cancelOrder(order.id)}
-                    className="flex cursor-pointer items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-semibold"
+                    disabled={isOrderProcessing(order.id)}
+                    className="flex cursor-pointer items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-semibold disabled:opacity-70 disabled:cursor-not-allowed min-w-[130px] justify-center"
                   >
-                    <XCircle size={16} />
-                    Cancel Order
+                    {isOrderProcessing(order.id, 'cancel') ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <XCircle size={16} />
+                    )}
+                    {isOrderProcessing(order.id, 'cancel') ? 'Cancelling...' : 'Cancel Order'}
                   </button>
                 )}
               </div>

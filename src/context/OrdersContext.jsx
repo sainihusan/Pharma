@@ -7,6 +7,7 @@ const OrdersContext = createContext();
 export const OrdersProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [processingOrder, setProcessingOrder] = useState(null);
   const { user } = useAuth();
 
   const fetchOrders = useCallback(async () => {
@@ -50,7 +51,7 @@ export const OrdersProvider = ({ children }) => {
   };
 
   const cancelOrder = async (id) => {
-    setIsLoading(true);
+    setProcessingOrder({ id, action: 'cancel' });
     try {
       await ordersService.updateOrderStatus(id, { status: 'Cancelled' });
       await fetchOrders();
@@ -58,12 +59,12 @@ export const OrdersProvider = ({ children }) => {
       console.error('Failed to cancel order:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setProcessingOrder(null);
     }
   };
 
   const acceptOrder = async (id) => {
-    setIsLoading(true);
+    setProcessingOrder({ id, action: 'accept' });
     try {
       await ordersService.updateOrderStatus(id, { status: 'Accepted', acceptedByAdmin: true });
       await fetchOrders();
@@ -71,12 +72,12 @@ export const OrdersProvider = ({ children }) => {
       console.error('Failed to accept order:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setProcessingOrder(null);
     }
   };
 
   const deleteOrder = async (id) => {
-    setIsLoading(true);
+    setProcessingOrder({ id, action: 'delete' });
     try {
       await ordersService.deleteOrder(id);
       await fetchOrders();
@@ -84,12 +85,12 @@ export const OrdersProvider = ({ children }) => {
       console.error('Failed to delete order:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setProcessingOrder(null);
     }
   };
 
   const updateOrderStatus = async (id, newStatus) => {
-    setIsLoading(true);
+    setProcessingOrder({ id, action: newStatus.toLowerCase() });
     try {
       await ordersService.updateOrderStatus(id, { status: newStatus });
       await fetchOrders();
@@ -97,7 +98,7 @@ export const OrdersProvider = ({ children }) => {
       console.error('Failed to update order status:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setProcessingOrder(null);
     }
   };
 
@@ -106,6 +107,7 @@ export const OrdersProvider = ({ children }) => {
       value={{ 
         orders, 
         isLoading, 
+        processingOrder,
         addOrder, 
         cancelOrder, 
         deleteOrder, 
