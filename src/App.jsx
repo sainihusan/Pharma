@@ -12,14 +12,11 @@ import OrderHistory from './pages/OrderHistory';
 import Dashboard from './pages/admin/Dashboard';
 import Revenue from './pages/admin/Revenue';
 
-
 import WelcomePage from './pages/WelcomePage';
 import ForgotPasswordPage from './pages/auth/ForgotPassword';
 import ProfilePage from './pages/Profile';
 
-
 import ProtectedRoute from './components/auth/ProtectedRoute';
-
 
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -49,65 +46,117 @@ const theme = createTheme({
 
 export default function App() {
   const location = useLocation();
+
   const hideLayoutRoutes = ['/welcome', '/forgot-password'];
   const shouldHideLayout = hideLayoutRoutes.includes(location.pathname);
 
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
+
       <AuthProvider>
         <MedicinesProvider>
           <CartProvider>
             <OrdersProvider>
+
               <ScrollToTop />
+
               <div className="min-h-screen flex flex-col bg-gray-50 font-sans text-gray-900 text-[14px]">
+
+                {/* Navbar */}
                 {!shouldHideLayout && <Navbar />}
 
-                <main className="flex-1 flex flex-col relative">
-                  {/* Global Background Decorations */}
+                {/* MAIN LANDMARK (IMPORTANT FIX) */}
+                <main
+                  role="main"
+                  className="flex-1 flex flex-col relative"
+                >
+
+                  {/* Background Effects */}
                   <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
                     <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-blue-100/40 blur-[100px] animate-pulse" />
                     <div className="absolute bottom-[-5%] left-[-5%] w-[500px] h-[500px] rounded-full bg-indigo-100/30 blur-[120px] animate-pulse delay-1000" />
                   </div>
 
+                  {/* Page Content */}
                   <PageTransition>
                     <Routes location={location} key={location.pathname}>
+
                       <Route path="/" element={<Home />} />
                       <Route path="/shop" element={<Shop />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
-                      <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+
+                      <Route
+                        path="/cart"
+                        element={
+                          <ProtectedRoute>
+                            <Cart />
+                          </ProtectedRoute>
+                        }
+                      />
 
                       <Route path="/welcome" element={<WelcomePage />} />
                       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-                      <Route path="/orders" element={
-                        <ProtectedRoute><OrderHistory /></ProtectedRoute>
-                      } />
+                      <Route
+                        path="/orders"
+                        element={
+                          <ProtectedRoute>
+                            <OrderHistory />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                      <Route path="/profile" element={
-                        <ProtectedRoute><ProfilePage /></ProtectedRoute>
-                      } />
+                      <Route
+                        path="/profile"
+                        element={
+                          <ProtectedRoute>
+                            <ProfilePage />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                      <Route path="/admin/dashboard" element={
-                        <ProtectedRoute adminOnly><Dashboard /></ProtectedRoute>
-                      } />
+                      <Route
+                        path="/admin/dashboard"
+                        element={
+                          <ProtectedRoute adminOnly>
+                            <Dashboard />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                      <Route path="/admin/revenue" element={
-                        <ProtectedRoute adminOnly><Revenue /></ProtectedRoute>
-                      } />
+                      <Route
+                        path="/admin/revenue"
+                        element={
+                          <ProtectedRoute adminOnly>
+                            <Revenue />
+                          </ProtectedRoute>
+                        }
+                      />
 
                       <Route path="*" element={<Navigate to="/" replace />} />
+
                     </Routes>
                   </PageTransition>
+
+                  {/* Accessibility fallback (prevents empty main) */}
+                  <div className="sr-only">
+                    Main content area
+                  </div>
+
                 </main>
 
+                {/* Footer */}
                 {!shouldHideLayout && <Footer />}
+
               </div>
+
             </OrdersProvider>
           </CartProvider>
         </MedicinesProvider>
       </AuthProvider>
+
     </MuiThemeProvider>
   );
 }
