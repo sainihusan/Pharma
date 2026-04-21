@@ -71,7 +71,7 @@ const OtpModal = ({ open, email, onSuccess, onCancel }) => {
       }}
     >
       <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
-        <IconButton onClick={onCancel} size="small" disabled={loading}>
+        <IconButton onClick={onCancel} size="small" disabled={loading} aria-label="Close modal">
           <X size={20} />
         </IconButton>
       </Box>
