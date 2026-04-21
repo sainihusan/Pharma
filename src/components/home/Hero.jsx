@@ -151,7 +151,7 @@ export default function Hero() {
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent z-[1]" />
 
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-10 bg-white/10 backdrop-blur-md p-2 rounded-full border border-white/20 items-center">
+            <div>
               {heroImages.map((_, index) => (
                 <button
                   key={index}
