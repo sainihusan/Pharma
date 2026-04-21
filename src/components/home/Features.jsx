@@ -49,7 +49,7 @@ export default function Features() {
         viewport={{ once: true, margin: "-100px" }}
         className="mx-auto mt-10 "
       >
-        <dl className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-x-8 sm:gap-y-12">
+        <dl className="grid grid-cols-1 md:grid-cols-3  gap-x-8 gap-y-1">
           {[
             {
               icon: <ShieldCheck className="h-7 w-7 text-blue-600" />,
