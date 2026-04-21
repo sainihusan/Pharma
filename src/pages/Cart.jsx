@@ -176,74 +176,57 @@ export default function Cart() {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <ul className="divide-y divide-gray-100">
                 {cart.map((item) => (
-                  <li key={item.id} className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 hover:bg-gray-50/50 transition-colors">
-                    <div className="h-32 w-32 flex-shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-100 flex items-center justify-center shadow-inner relative group">
+                  <li key={item.id} className="p-4 sm:p-6 flex items-center gap-4 sm:gap-6 hover:bg-gray-50/50 transition-colors">
+                    {/* Product Image */}
+                    <div className="h-20 w-20 sm:h-32 sm:w-32 flex-shrink-0 overflow-hidden rounded-2xl border border-gray-100 flex items-center justify-center p-2 bg-gray-50">
                       {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
+                        <img src={item.image} alt={item.name} className="h-full w-full object-contain" />
                       ) : (
-                        <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-500 to-indigo-600">
-                          {item.name.charAt(0)}
-                        </span>
+                        <span className="text-2xl font-black text-blue-600">{item.name.charAt(0)}</span>
                       )}
-
-                      <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-xl" />
                     </div>
 
-                    <div className="flex flex-1 flex-col justify-between">
-                      <div className="flex justify-between sm:grid sm:grid-cols-2 lg:block xl:grid">
-                        <div className="pr-6">
-                          <h3 className="text-xl font-bold text-gray-900">
-                            {item.name}
-                          </h3>
-                          <p className="mt-1 text-sm text-gray-500 line-clamp-2">{item.description}</p>
-                        </div>
-
-                        <div className="text-right sm:text-left lg:text-right sm:mt-0 mt-2">
-                          <p className="text-lg font-bold text-gray-900">
-                            ₹{(item.price * item.quantity).toFixed(2)}
-                          </p>
-                          {item.quantity > 1 && (
-                            <p className="text-xs text-gray-400 font-medium">
-                              ₹{item.price.toFixed(2)} each
-                            </p>
-                          )}
-                        </div>
+                    {/* Product Details */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-xl font-bold text-gray-900 truncate">
+                        {item.name}
+                      </h3>
+                      <p className="text-xs sm:text-base text-gray-500 truncate mt-0.5">
+                        {item.description}
+                      </p>
+                      <div className="mt-2 text-lg sm:text-2xl font-black text-gray-900 underline decoration-blue-500/30 underline-offset-4">
+                        ₹{item.price}
                       </div>
+                    </div>
 
-                      <div className="mt-4 flex items-center justify-between">
-                        <div className="flex items-center rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
-                          <button
-                            onClick={() => updateQuantity(item.id, -1)}
-                            disabled={item.quantity <= 1}
-                            aria-label={`Decrease quantity of ${item.name}`}
-                            className="px-4 py-2 hover:bg-gray-50 text-gray-600 transition-colors font-medium text-lg active:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:active:bg-white"
-                          >
-                            -
-                          </button>
-                          <span className="px-4 py-2 font-semibold text-gray-900 border-x border-gray-200 min-w-[3rem] text-center">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(item.id, 1)}
-                            aria-label={`Increase quantity of ${item.name}`}
-                            className="px-4 py-2 hover:bg-gray-50 text-gray-600 transition-colors font-medium text-lg active:bg-gray-100"
-                          >
-                            +
-                          </button>
-                        </div>
-
+                    {/* Quantity Selector - Matches provided image */}
+                    <div className="flex flex-col items-end gap-3">
+                      <div className="flex items-center bg-[#2b8a3e] text-white rounded-xl shadow-lg ring-1 ring-black/5 overflow-hidden">
                         <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="flex items-center gap-1.5 text-sm font-medium text-rose-500 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 transition-colors"
+                          onClick={() => updateQuantity(item.id, -1)}
+                          disabled={item.quantity <= 1}
+                          className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-black/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
                         >
-                          <Trash2 size={18} />
-                          <span className="hidden sm:inline">Remove</span>
+                          −
+                        </button>
+                        <span className="w-6 sm:w-8 text-center font-black text-sm sm:text-lg">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.id, 1)}
+                          className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-black/10 transition-colors font-bold text-lg"
+                        >
+                          +
                         </button>
                       </div>
+
+                      <button
+                        onClick={() => removeFromCart(item.id)}
+                        className="p-1.5 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                        aria-label="Remove item"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </div>
                   </li>
                 ))}
