@@ -1,11 +1,18 @@
 import { MapPin, Phone, Mail, Send, Clock, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import LoadingButton from '../components/LoadingButton';
 
 export default function Contact() {
+  const [sending, setSending] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Message sent successfully!');
-    e.target.reset();
+    setSending(true);
+    setTimeout(() => {
+      setSending(false);
+      alert('Message sent successfully!');
+      e.target.reset();
+    }, 1500);
   };
 
   return (
@@ -128,13 +135,18 @@ export default function Contact() {
                     <textarea rows={3} required className="w-full px-5 py-3 rounded-xl bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all outline-none text-sm font-medium resize-none placeholder:text-slate-300" placeholder="How can we help?"></textarea>
                   </div>
 
-                  <button type="submit" className="group relative w-full overflow-hidden rounded-xl bg-slate-900 px-6 py-4 text-sm font-bold text-white transition-all hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/20 active:scale-[0.98]">
+                  <LoadingButton
+                    type="submit"
+                    loading={sending}
+                    loadingText="Sending..."
+                    className="group relative w-full overflow-hidden rounded-xl bg-slate-900 px-6 py-4 text-sm font-bold text-white transition-all hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/20 active:scale-[0.98]"
+                  >
                     <div className="relative z-10 flex items-center justify-center gap-2">
                       <span>Send Message</span>
                       <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  </button>
+                  </LoadingButton>
                 </form>
 
                 <p className="mt-6 text-center text-[10px] text-slate-400 font-medium">

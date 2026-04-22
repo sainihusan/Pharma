@@ -1,16 +1,32 @@
 import { useOrders } from '../context/OrdersContext';
 import { useAuth } from '../context/AuthContext';
+import { Skeleton } from '@mui/material';
 import { Package, XCircle, Trash2, Clock, Calendar, CheckCircle, User as UserIcon, Loader2 } from 'lucide-react';
+import LoadingButton from '../components/LoadingButton';
+import OrderRowSkeleton from '../components/skeletons/OrderRowSkeleton';
 
 export default function OrderHistory() {
-  const { orders, cancelOrder, deleteOrder, updateOrderStatus, acceptOrder, processingOrder } = useOrders();
+  const { orders, isLoading, cancelOrder, deleteOrder, updateOrderStatus, acceptOrder, processingOrder } = useOrders();
   const { user, isAdmin } = useAuth();
 
   const displayOrders = isAdmin
     ? orders
     : orders.filter((o) => o.userEmail === user?.email);
 
-  if (displayOrders.length === 0) {
+  if (isLoading) {
+    return (
+      <div className="bg-gray-50 min-h-screen py-10">
+        <div className="max-w-5xl mx-auto px-4">
+          <Skeleton width={300} height={60} sx={{ mb: 6 }} />
+          {[...Array(3)].map((_, i) => (
+            <OrderRowSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLoading && displayOrders.length === 0) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center px-4">
         <div className="bg-blue-50 p-6 rounded-full mb-6">
@@ -124,59 +140,47 @@ export default function OrderHistory() {
               <div className="bg-gray-50/50 p-4 sm:px-6 flex justify-end gap-3 border-t border-gray-100">
                 {isAdmin && order.status === 'Pending' && (
                   <>
-                    <button
+                    <LoadingButton
                       onClick={() => acceptOrder(order.id)}
-                      disabled={isOrderProcessing(order.id)}
-                      className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold shadow-sm disabled:opacity-70 disabled:cursor-not-allowed min-w-[120px] justify-center"
+                      loading={isOrderProcessing(order.id, 'accept')}
+                      loadingText="Accepting..."
+                      icon={CheckCircle}
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-semibold shadow-sm min-w-[120px]"
                     >
-                      {isOrderProcessing(order.id, 'accept') ? (
-                        <Loader2 size={16} className="animate-spin" />
-                      ) : (
-                        <CheckCircle size={16} />
-                      )}
-                      {isOrderProcessing(order.id, 'accept') ? 'Accepting...' : 'Accept Order'}
-                    </button>
-                    <button
+                      Accept Order
+                    </LoadingButton>
+                    <LoadingButton
                       onClick={() => updateOrderStatus(order.id, 'Delivered')}
-                      disabled={isOrderProcessing(order.id)}
-                      className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm disabled:opacity-70 disabled:cursor-not-allowed min-w-[160px] justify-center"
+                      loading={isOrderProcessing(order.id, 'delivered')}
+                      loadingText="Updating..."
+                      icon={CheckCircle}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-semibold shadow-sm min-w-[160px]"
                     >
-                      {isOrderProcessing(order.id, 'delivered') ? (
-                        <Loader2 size={16} className="animate-spin" />
-                      ) : (
-                        <CheckCircle size={16} />
-                      )}
-                      {isOrderProcessing(order.id, 'delivered') ? 'Updating...' : 'Mark as Delivered'}
-                    </button>
+                      Mark as Delivered
+                    </LoadingButton>
                   </>
                 )}
                 {isAdmin && order.status === 'Accepted' && (
-                  <button
+                  <LoadingButton
                     onClick={() => updateOrderStatus(order.id, 'Delivered')}
-                    disabled={isOrderProcessing(order.id)}
-                    className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold shadow-sm disabled:opacity-70 disabled:cursor-not-allowed min-w-[160px] justify-center"
+                    loading={isOrderProcessing(order.id, 'delivered')}
+                    loadingText="Updating..."
+                    icon={CheckCircle}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-semibold shadow-sm min-w-[160px]"
                   >
-                    {isOrderProcessing(order.id, 'delivered') ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : (
-                      <CheckCircle size={16} />
-                    )}
-                    {isOrderProcessing(order.id, 'delivered') ? 'Updating...' : 'Mark as Delivered'}
-                  </button>
+                    Mark as Delivered
+                  </LoadingButton>
                 )}
                 {(order.status === 'Pending' || order.status === 'Accepted') && (
-                  <button
+                  <LoadingButton
                     onClick={() => cancelOrder(order.id)}
-                    disabled={isOrderProcessing(order.id)}
-                    className="flex cursor-pointer items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-semibold disabled:opacity-70 disabled:cursor-not-allowed min-w-[130px] justify-center"
+                    loading={isOrderProcessing(order.id, 'cancel')}
+                    loadingText="Cancelling..."
+                    icon={XCircle}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 text-sm font-semibold min-w-[130px]"
                   >
-                    {isOrderProcessing(order.id, 'cancel') ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : (
-                      <XCircle size={16} />
-                    )}
-                    {isOrderProcessing(order.id, 'cancel') ? 'Cancelling...' : 'Cancel Order'}
-                  </button>
+                    Cancel Order
+                  </LoadingButton>
                 )}
               </div>
             </div>

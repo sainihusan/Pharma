@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import LoadingButton from '../components/LoadingButton';
 
 const loadRazorpay = () => {
   return new Promise((resolve) => {
@@ -368,13 +369,14 @@ export default function Cart() {
                     >
                       Cancel
                     </button>
-                    <button
+                    <LoadingButton
                       type="submit"
-                      disabled={isProcessing}
-                      className="flex-[2] flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-4 text-sm font-black text-white shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-75"
+                      loading={isProcessing}
+                      loadingText="Verifying..."
+                      className="flex-[2] rounded-2xl bg-blue-600 px-4 py-4 text-sm font-black text-white shadow-xl shadow-blue-200 hover:bg-blue-700"
                     >
-                      {isProcessing ? 'Verifying...' : `Pay ₹${orderTotal.toFixed(2)}`}
-                    </button>
+                      Pay ₹{orderTotal.toFixed(2)}
+                    </LoadingButton>
                   </div>
                 </form>
               )}

@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useOrders } from '../../context/OrdersContext';
+import LoadingButton from '../../components/LoadingButton';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, Cell, PieChart, Pie
@@ -8,9 +9,10 @@ import {
   TrendingUp, TrendingDown, DollarSign, ShoppingBag,
   ArrowUpRight, ArrowDownRight, Calendar, Layers
 } from 'lucide-react';
+import { Skeleton } from '@mui/material';
 
 export default function Revenue() {
-  const { orders } = useOrders();
+  const { orders, isLoading } = useOrders();
 
   const stats = useMemo(() => {
     // Filter out cancelled orders for revenue calculation
@@ -63,6 +65,15 @@ export default function Revenue() {
     { name: 'Cancelled', value: stats.cancelledCount, color: '#f43f5e' }
   ];
 
+  const [downloading, setDownloading] = useState(false);
+  const handleDownload = () => {
+    setDownloading(true);
+    setTimeout(() => {
+      setDownloading(false);
+      alert('Report downloaded successfully!');
+    }, 2000);
+  };
+
   return (
     <div className="p-6 lg:p-8 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -73,34 +84,46 @@ export default function Revenue() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <StatCard
-            title="Total Revenue"
-            value={`₹${stats.totalRevenue.toLocaleString()}`}
-            icon={<DollarSign className="text-blue-600" />}
-            trend={+12.5}
-            color="blue"
-          />
-          <StatCard
-            title="Net Profit"
-            value={`₹${stats.totalProfit.toLocaleString()}`}
-            icon={<TrendingUp className="text-emerald-600" />}
-            trend={+8.2}
-            color="emerald"
-          />
-          <StatCard
-            title="Realized Loss"
-            value={`₹${stats.potentialLoss.toLocaleString()}`}
-            icon={<TrendingDown className="text-rose-600" />}
-            trend={-4.1}
-            color="rose"
-          />
-          <StatCard
-            title="Total Orders"
-            value={stats.orderCount}
-            icon={<ShoppingBag className="text-indigo-600" />}
-            trend={+15.3}
-            color="indigo"
-          />
+          {isLoading ? (
+            [...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <Skeleton variant="circular" width={48} height={48} sx={{ mb: 2 }} />
+                <Skeleton width="60%" height={20} sx={{ mb: 1 }} />
+                <Skeleton width="80%" height={32} />
+              </div>
+            ))
+          ) : (
+            <>
+              <StatCard
+                title="Total Revenue"
+                value={`₹${stats.totalRevenue.toLocaleString()}`}
+                icon={<DollarSign className="text-blue-600" />}
+                trend={+12.5}
+                color="blue"
+              />
+              <StatCard
+                title="Net Profit"
+                value={`₹${stats.totalProfit.toLocaleString()}`}
+                icon={<TrendingUp className="text-emerald-600" />}
+                trend={+8.2}
+                color="emerald"
+              />
+              <StatCard
+                title="Realized Loss"
+                value={`₹${stats.potentialLoss.toLocaleString()}`}
+                icon={<TrendingDown className="text-rose-600" />}
+                trend={-4.1}
+                color="rose"
+              />
+              <StatCard
+                title="Total Orders"
+                value={stats.orderCount}
+                icon={<ShoppingBag className="text-indigo-600" />}
+                trend={+15.3}
+                color="indigo"
+              />
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -122,53 +145,57 @@ export default function Revenue() {
             </div>
 
             <div className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
-                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="colorProf" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }}
-                    dy={10}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }}
-                    tickFormatter={(value) => `₹${value}`}
-                  />
-                  <Tooltip
-                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#2563eb"
-                    strokeWidth={4}
-                    fillOpacity={1}
-                    fill="url(#colorRev)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="profit"
-                    stroke="#10b981"
-                    strokeWidth={4}
-                    fillOpacity={1}
-                    fill="url(#colorProf)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {isLoading ? (
+                <Skeleton variant="rectangular" width="100%" height="100%" sx={{ borderRadius: 4 }} />
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData}>
+                    <defs>
+                      <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
+                        <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="colorProf" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis
+                      dataKey="name"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }}
+                      dy={10}
+                    />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }}
+                      tickFormatter={(value) => `₹${value}`}
+                    />
+                    <Tooltip
+                      contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#2563eb"
+                      strokeWidth={4}
+                      fillOpacity={1}
+                      fill="url(#colorRev)"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="profit"
+                      stroke="#10b981"
+                      strokeWidth={4}
+                      fillOpacity={1}
+                      fill="url(#colorProf)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
 
@@ -217,9 +244,14 @@ export default function Revenue() {
               <p className="text-indigo-100 text-sm leading-relaxed mb-6">
                 Your revenue has increased by 15% this week compared to last week. The most popular category is "Medicines".
               </p>
-              <button className="w-full py-3 bg-white text-indigo-600 font-bold rounded-2xl shadow-md hover:bg-indigo-50 transition-colors">
+              <LoadingButton
+                loading={downloading}
+                loadingText="Generating..."
+                onClick={handleDownload}
+                className="w-full py-3 bg-white text-indigo-600 font-bold rounded-2xl shadow-md hover:bg-indigo-50 transition-colors"
+              >
                 Download Report
-              </button>
+              </LoadingButton>
             </div>
           </div>
         </div>

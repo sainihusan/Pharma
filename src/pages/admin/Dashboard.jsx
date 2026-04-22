@@ -20,11 +20,12 @@ import {
   useTheme,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
+import TableRowSkeleton from '../../components/skeletons/TableRowSkeleton';
 
 export default function Dashboard() {
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
-  const { medicines, addMedicine, updateMedicine, deleteMedicine } = useMedicines();
+  const { medicines, loading, addMedicine, updateMedicine, deleteMedicine } = useMedicines();
 
   const [openForm, setOpenForm] = useState(false);
   const [editingMed, setEditingMed] = useState(null);
@@ -112,48 +113,52 @@ export default function Dashboard() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {medicines.map((med) => (
-                <TableRow key={med.id} hover>
-                  <TableCell>
-                    {med.image ? (
-                      <Box
-                        component="img"
-                        src={med.image}
-                        alt={med.name}
-                        sx={{ width: 40, h: 40, borderRadius: 1.5, objectFit: 'cover', border: '1px solid', borderColor: 'grey.100' }}
-                      />
-                    ) : (
-                      <Box sx={{ width: 40, h: 40, borderRadius: 1.5, bgcolor: 'grey.100', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 'bold', color: 'grey.400' }}>
-                        {med.name.charAt(0)}
-                      </Box>
-                    )}
-                  </TableCell>
-                  <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
-                    {med.name}
-                  </TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                      {med.category || 'Uncategorized'}
-                    </span>
-                  </TableCell>
-                  <TableCell sx={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {med.description}
-                  </TableCell>
-                  <TableCell align="right" sx={{ color: 'text.secondary' }}>₹{med.costPrice || '-'}</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 'bold', color: 'primary.main' }}>₹{med.price}</TableCell>
-                  <TableCell align="center">
-                    <IconButton color="primary" onClick={() => handleOpenEdit(med)} size="small">
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => deleteMedicine(med.id)} size="small">
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {medicines.length === 0 && (
+              {loading ? (
+                [...Array(5)].map((_, i) => <TableRowSkeleton key={i} />)
+              ) : (
+                medicines.map((med) => (
+                  <TableRow key={med.id} hover>
+                    <TableCell>
+                      {med.image ? (
+                        <Box
+                          component="img"
+                          src={med.image}
+                          alt={med.name}
+                          sx={{ width: 40, h: 40, borderRadius: 1.5, objectFit: 'cover', border: '1px solid', borderColor: 'grey.100' }}
+                        />
+                      ) : (
+                        <Box sx={{ width: 40, h: 40, borderRadius: 1.5, bgcolor: 'grey.100', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 'bold', color: 'grey.400' }}>
+                          {med.name.charAt(0)}
+                        </Box>
+                      )}
+                    </TableCell>
+                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                      {med.name}
+                    </TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                        {med.category || 'Uncategorized'}
+                      </span>
+                    </TableCell>
+                    <TableCell sx={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {med.description}
+                    </TableCell>
+                    <TableCell align="right" sx={{ color: 'text.secondary' }}>₹{med.costPrice || '-'}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold', color: 'primary.main' }}>₹{med.price}</TableCell>
+                    <TableCell align="center">
+                      <IconButton color="primary" onClick={() => handleOpenEdit(med)} size="small">
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton color="error" onClick={() => deleteMedicine(med.id)} size="small">
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+              {!loading && medicines.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                  <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
                     No medicines found. Click "Add Medicine" to create one.
                   </TableCell>
                 </TableRow>

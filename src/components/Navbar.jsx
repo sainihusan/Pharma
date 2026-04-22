@@ -6,6 +6,7 @@ import {
   ShoppingCart, LogOut, ShieldAlert, User,
   Clock, Menu, X, ChevronDown, LogIn, UserPlus, TrendingUp
 } from 'lucide-react';
+import LoadingButton from './LoadingButton';
 
 export default function Navbar() {
   const { cart, clearCart } = useCart();
@@ -15,6 +16,7 @@ export default function Navbar() {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const profileRef = useRef(null);
 
 
@@ -35,13 +37,16 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const handleLogout = async () => {
-
-    await logout();
-    clearCart();
-    setIsMobileMenuOpen(false);
-
-
-    window.location.href = '/';
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      clearCart();
+      setIsMobileMenuOpen(false);
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed', error);
+      setIsLoggingOut(false);
+    }
   };
 
   const navLinks = [
@@ -183,12 +188,15 @@ export default function Navbar() {
                       )}
 
                       <div className="border-t border-gray-50 mt-1 pt-1">
-                        <button
+                        <LoadingButton
                           onClick={handleLogout}
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
+                          loading={isLoggingOut}
+                          loadingText="Signing Out..."
+                          icon={LogOut}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition-colors border-none bg-transparent shadow-none"
                         >
-                          <LogOut size={16} /> Sign Out
-                        </button>
+                          Sign Out
+                        </LoadingButton>
                       </div>
                     </div>
                   )}
@@ -289,12 +297,15 @@ export default function Navbar() {
                       </>
                     )}
 
-                    <button
+                    <LoadingButton
                       onClick={handleLogout}
-                      className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                      loading={isLoggingOut}
+                      loadingText="Signing Out..."
+                      icon={LogOut}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-rose-600 hover:bg-rose-50 transition-colors border-none bg-transparent shadow-none"
                     >
-                      <LogOut size={18} /> Sign Out
-                    </button>
+                      Sign Out
+                    </LoadingButton>
                   </>
                 ) : (
                   <div className="space-y-3 px-1 mt-4">

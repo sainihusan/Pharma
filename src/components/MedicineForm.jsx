@@ -239,6 +239,7 @@ export default function MedicineForm({ open, handleClose, onSubmit, initialData 
             variant="contained"
             color="primary"
             disabled={isSubmitting}
+            startIcon={isSubmitting && <CircularProgress size={20} color="inherit" />}
             sx={{
               px: 4,
               borderRadius: 2.5,
@@ -247,7 +248,7 @@ export default function MedicineForm({ open, handleClose, onSubmit, initialData 
               boxShadow: '0 8px 16px -4px rgba(37, 99, 235, 0.3)'
             }}
           >
-            {initialData ? 'Save Changes' : 'Add to Inventory'}
+            {isSubmitting ? (initialData ? 'Saving...' : 'Adding...') : (initialData ? 'Save Changes' : 'Add to Inventory')}
           </Button>
         </DialogActions>
       </form>
