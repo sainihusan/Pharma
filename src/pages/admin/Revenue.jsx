@@ -22,7 +22,14 @@ export default function Revenue() {
     // Realized loss: orders that were accepted by admin but then cancelled
     const realizedLoss = cancelledOrders
       .filter(o => o.acceptedByAdmin)
-      .reduce((sum, o) => sum + (o.total || 0), 0);
+      .reduce((sum, o) => {
+        const isCOD = !o.paymentMethod || o.paymentMethod.toUpperCase() === 'COD';
+        if (isCOD) {
+          return sum + (o.total || 0); // 100% loss on COD
+        } else {
+          return sum + ((o.total || 0) * 0.5); // 50% loss/refund on prepaid
+        }
+      }, 0);
 
     const totalRevenue = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
     // Assuming 30% profit margin on revenue, then subtract the cost of cancelled accepted orders
@@ -40,24 +47,51 @@ export default function Revenue() {
 
   // Group data by date for the chart
   const chartData = useMemo(() => {
-    const last7Days = [...Array(7)].map((_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - (6 - i));
-      return d.toISOString().split('T')[0];
+    const dateGroups = {};
+
+    orders.forEach(o => {
+      const orderDate = o.createdAt || o.date;
+      if (!orderDate || o.status === 'Cancelled') return;
+      
+      const d = new Date(orderDate);
+      if (isNaN(d.getTime())) return;
+
+      // Create a stable local date string (YYYY-MM-DD)
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      
+      if (!dateGroups[dateKey]) {
+        dateGroups[dateKey] = { dateObj: d, revenue: 0, profit: 0 };
+      }
+      
+      const total = o.total || 0;
+      dateGroups[dateKey].revenue += total;
+      dateGroups[dateKey].profit += total * 0.3;
     });
 
-    return last7Days.map(date => {
-      const dayOrders = orders.filter(o => o.date.startsWith(date));
-      const revenue = dayOrders
-        .filter(o => o.status !== 'Cancelled')
-        .reduce((sum, o) => sum + (o.total || 0), 0);
-
+    const sortedKeys = Object.keys(dateGroups).sort();
+    let last7 = sortedKeys.slice(-7).map(key => {
+      const data = dateGroups[key];
       return {
-        name: new Date(date).toLocaleDateString(undefined, { weekday: 'short' }),
-        revenue: revenue,
-        profit: revenue * 0.3
+        name: data.dateObj.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
+        revenue: data.revenue,
+        profit: data.profit
       };
     });
+
+    // Fallback if no orders exist
+    if (last7.length === 0) {
+      return [...Array(7)].map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return {
+          name: d.toLocaleDateString(undefined, { weekday: 'short' }),
+          revenue: 0,
+          profit: 0
+        };
+      });
+    }
+
+    return last7;
   }, [orders]);
 
   const pieData = [
