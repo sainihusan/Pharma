@@ -2,16 +2,16 @@ import apiClient from './apiClient';
 
 const ordersService = {
   createOrder: (orderData) =>
-    apiClient('/orders', { method: 'POST', body: orderData }),
+    apiClient.post('/orders', orderData),
 
   getOrders: () =>
-    apiClient('/orders', { method: 'GET' }),
+    apiClient.get('/orders'),
 
   updateOrderStatus: (id, statusData) =>
-    apiClient(`/orders/${id}/status`, { method: 'PATCH', body: statusData }),
+    apiClient.patch(`/orders/${id}/status`, statusData),
 
   deleteOrder: (id) =>
-    apiClient(`/orders/${id}`, { method: 'DELETE' }),
+    apiClient.delete(`/orders/${id}`),
 };
 
 export default ordersService;

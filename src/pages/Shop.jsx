@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useMedicines } from '../context/MedicinesContext';
 import MedicineCard from '../components/MedicineCard';
+import MedicineCardSkeleton from '../components/skeletons/MedicineCardSkeleton';
 import { Search, Filter, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -34,10 +35,20 @@ export default function Shop() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-500 font-medium animate-pulse">Fetching medical inventory...</p>
+      <div className="bg-gray-50/50 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="lg:mb-6 mb-4">
+            <div className="h-12 w-64 bg-gray-200 rounded-lg animate-pulse mb-6" />
+            <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
+              <div className="h-14 w-full max-w-xl bg-gray-200 rounded-3xl animate-pulse" />
+              <div className="h-10 w-32 bg-gray-200 rounded-xl animate-pulse" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[...Array(8)].map((_, i) => (
+              <MedicineCardSkeleton key={i} />
+            ))}
+          </div>
         </div>
       </div>
     );

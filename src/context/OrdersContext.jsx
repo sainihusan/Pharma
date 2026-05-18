@@ -7,17 +7,17 @@ const OrdersContext = createContext();
 export const OrdersProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [processingOrder, setProcessingOrder] = useState(null);
   const { user } = useAuth();
 
-  const fetchOrders = useCallback(async () => {
+  const fetchOrders = useCallback(async (isSilent = false) => {
     if (!user) {
       setOrders([]);
       return;
     }
-    setIsLoading(true);
+    if (!isSilent) setIsLoading(true);
     try {
       const response = await ordersService.getOrders();
-      // Ensure we're setting an array, handling different possible response structures
       const ordersData = response.data || response;
       const list = Array.isArray(ordersData) ? ordersData : [];
       setOrders(list.map(o => ({
@@ -28,7 +28,7 @@ export const OrdersProvider = ({ children }) => {
       console.error('Failed to fetch orders:', error);
       setOrders([]);
     } finally {
-      setIsLoading(false);
+      if (!isSilent) setIsLoading(false);
     }
   }, [user]);
 
@@ -40,7 +40,7 @@ export const OrdersProvider = ({ children }) => {
     setIsLoading(true);
     try {
       await ordersService.createOrder(orderData);
-      await fetchOrders(); // Refresh orders after adding
+      await fetchOrders(true); // Silent refresh
     } catch (error) {
       console.error('Failed to add order:', error);
       throw error;
@@ -50,54 +50,54 @@ export const OrdersProvider = ({ children }) => {
   };
 
   const cancelOrder = async (id) => {
-    setIsLoading(true);
+    setProcessingOrder({ id, action: 'cancel' });
     try {
       await ordersService.updateOrderStatus(id, { status: 'Cancelled' });
-      await fetchOrders();
+      await fetchOrders(true); // Silent refresh
     } catch (error) {
       console.error('Failed to cancel order:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setProcessingOrder(null);
     }
   };
 
   const acceptOrder = async (id) => {
-    setIsLoading(true);
+    setProcessingOrder({ id, action: 'accept' });
     try {
       await ordersService.updateOrderStatus(id, { status: 'Accepted', acceptedByAdmin: true });
-      await fetchOrders();
+      await fetchOrders(true); // Silent refresh
     } catch (error) {
       console.error('Failed to accept order:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setProcessingOrder(null);
     }
   };
 
   const deleteOrder = async (id) => {
-    setIsLoading(true);
+    setProcessingOrder({ id, action: 'delete' });
     try {
       await ordersService.deleteOrder(id);
-      await fetchOrders();
+      await fetchOrders(true); // Silent refresh
     } catch (error) {
       console.error('Failed to delete order:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setProcessingOrder(null);
     }
   };
 
   const updateOrderStatus = async (id, newStatus) => {
-    setIsLoading(true);
+    setProcessingOrder({ id, action: newStatus.toLowerCase() });
     try {
       await ordersService.updateOrderStatus(id, { status: newStatus });
-      await fetchOrders();
+      await fetchOrders(true); // Silent refresh
     } catch (error) {
       console.error('Failed to update order status:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setProcessingOrder(null);
     }
   };
 
@@ -106,6 +106,7 @@ export const OrdersProvider = ({ children }) => {
       value={{ 
         orders, 
         isLoading, 
+        processingOrder,
         addOrder, 
         cancelOrder, 
         deleteOrder, 

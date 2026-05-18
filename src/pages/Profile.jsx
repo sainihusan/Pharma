@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Box, Container, Paper, Typography, Divider, CircularProgress, Grid
+  Box, Container, Paper, Typography, Divider, CircularProgress, Grid, Skeleton
 } from '@mui/material';
 import { User as UserIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -47,9 +47,27 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-        <CircularProgress />
-      </Box>
+      <Container maxWidth="md" sx={{ py: 8 }}>
+        <Paper elevation={0} sx={{ p: { xs: 3, md: 5 }, borderRadius: 6, border: '1px solid', borderColor: 'grey.200' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
+            <Skeleton variant="rectangular" width={60} height={60} sx={{ borderRadius: 3 }} />
+            <Box sx={{ flex: 1 }}>
+              <Skeleton width="40%" height={32} />
+              <Skeleton width="30%" />
+            </Box>
+          </Box>
+          <Divider sx={{ mb: 4 }} />
+          {[...Array(4)].map((_, i) => (
+            <Box key={i} sx={{ mb: 3 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}><Skeleton width="60%" /></Grid>
+                <Grid item xs={12} sm={8}><Skeleton width="80%" height={24} /></Grid>
+              </Grid>
+              <Divider sx={{ my: 2, borderStyle: 'dashed' }} />
+            </Box>
+          ))}
+        </Paper>
+      </Container>
     );
   }
 

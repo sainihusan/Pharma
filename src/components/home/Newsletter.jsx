@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle } from 'lucide-react';
-import { Button } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 
 const Newsletter = () => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [placeholderText, setPlaceholderText] = useState('');
 
   useEffect(() => {
@@ -53,9 +54,13 @@ const Newsletter = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email) {
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3000);
-      setEmail('');
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        setSubmitted(true);
+        setTimeout(() => setSubmitted(false), 3000);
+        setEmail('');
+      }, 1500);
     }
   };
 
@@ -100,6 +105,7 @@ const Newsletter = () => {
                 <Button
                   type="submit"
                   variant="contained"
+                  disabled={loading}
                   sx={{
                     bgcolor: 'white',
                     color: 'black',
@@ -115,9 +121,9 @@ const Newsletter = () => {
                     },
                     transition: 'all 0.3s'
                   }}
-                  endIcon={<Send size={18} />}
+                  endIcon={loading ? <CircularProgress size={18} color="inherit" /> : <Send size={18} />}
                 >
-                  Subscribe
+                  {loading ? 'Subscribing...' : 'Subscribe'}
                 </Button>
               </form>
             ) : (
