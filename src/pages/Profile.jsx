@@ -162,31 +162,87 @@ export default function ProfilePage() {
 
   const requestNotificationPermission = async () => {
     if (!('Notification' in window)) {
-      alert('This browser does not support desktop alerts.');
+      alert('This browser does not support alerts.');
       return;
     }
     try {
       const permission = await Notification.requestPermission();
       setNotificationPermission(permission);
       if (permission === 'granted') {
+        playSuccessChime();
+        
+        // Show permission-granted confirmation via Service Worker if available
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          if (registration) {
+            registration.showNotification("🔔 Reminders Enabled!", {
+              body: "PharmaCare will now trigger notifications for your scheduled doses.",
+              icon: "https://cdn-icons-png.flaticon.com/512/822/822143.png",
+              badge: "https://cdn-icons-png.flaticon.com/512/822/822143.png"
+            });
+            return;
+          }
+        }
+        
+        // Fallback for browsers without service worker active
         new Notification("🔔 Reminders Enabled!", {
-          body: "PharmaCare will now trigger desktop notifications for your doses.",
+          body: "PharmaCare will now trigger notifications for your scheduled doses.",
           icon: "https://cdn-icons-png.flaticon.com/512/822/822143.png"
         });
-        playSuccessChime();
       }
     } catch (e) {
       console.error("Permission request rejected:", e);
     }
   };
 
-  const triggerPushNotification = (name, dose, remNotes) => {
+  const triggerPushNotification = async (name, dose, remNotes) => {
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(`💊 Dose Alert: ${name}`, {
-        body: `It's time to take your ${dose}. ${remNotes ? `Note: "${remNotes}"` : ""}`,
+      const title = `💊 Dose Alert: ${name}`;
+      const options = {
+        body: `It's time to take your ${dose}.${remNotes ? `\nInstructions: "${remNotes}"` : ""}`,
         icon: "https://cdn-icons-png.flaticon.com/512/822/822143.png",
-        vibrate: [200, 100, 200],
+        badge: "https://cdn-icons-png.flaticon.com/512/822/822143.png",
+        vibrate: [300, 100, 300, 100, 400],
+        data: {
+          dateOfArrival: Date.now(),
+          primaryKey: 'pharma-alarm'
+        },
+        actions: [
+          { 
+            action: 'taken', 
+            title: 'Taken 💊', 
+            icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png' 
+          },
+          { 
+            action: 'close', 
+            title: 'Snooze 🔔', 
+            icon: 'https://cdn-icons-png.flaticon.com/512/1828/1828843.png' 
+          }
+        ],
+        tag: 'pill-reminder-alert',
+        renotify: true,
         requireInteraction: true
+      };
+
+      // Trigger via Service Worker if available (required for mobile background support)
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          if (registration) {
+            await registration.showNotification(title, options);
+            return;
+          }
+        } catch (swErr) {
+          console.warn("Service Worker notification trigger failed, falling back:", swErr);
+        }
+      }
+
+      // Legacy fallback (Desktop only, doesn't support action buttons)
+      new Notification(title, {
+        body: options.body,
+        icon: options.icon,
+        vibrate: options.vibrate,
+        requireInteraction: options.requireInteraction
       });
     }
   };
